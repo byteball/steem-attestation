@@ -48,10 +48,6 @@ exports.goingToAttestAddress = (address) => {
 	return `Thanks, going to attest your BB address: ${address}.`;
 };
 
-exports.goingToAttestUsername = (username) => {
-	return `Thanks, going to attest your steem username: ${username}.`;
-};
-
 exports.privateOrPublic = () => {
 	return [
 		"Store your steem username privately in your wallet or post it publicly?\n\n",
@@ -81,17 +77,6 @@ exports.pleasePayOrPrivacy = (receivingAddress, price, challenge, postPublicly) 
 	return (postPublicly === null) ? exports.privateOrPublic() : exports.pleasePay(receivingAddress, price, challenge);
 };
 
-exports.receivedPaymentFromMultipleAddresses = () => {
-	return "Received a payment but looks like it was not sent from a single-address wallet.";
-};
-
-exports.receivedPaymentNotFromExpectedAddress = (address) => {
-	return [
-		`Received a payment but it was not sent from the expected address ${address}.\n`,
-		"Make sure you are in a single-address wallet, ",
-		"otherwise switch to a single-address wallet or create one and send me your address before paying."
-	].join('');
-};
 
 exports.receivedAndAcceptedYourPayment = (amount) => {
 	return `Received your payment of ${amount/1e9} GB.`;
