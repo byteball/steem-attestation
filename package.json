@@ -1,0 +1,20 @@
+{
+	"name": "steem-attestation",
+	"version": "1.0.0",
+	"description": "A byteball bot for attestation of steem username",
+	"main": "attestation.js",
+	"repository": "https://github.com/byteball/steem-attestation.git",
+	"author": "tony",
+	"license": "MIT",
+	"dependencies": {
+		"body-parser": "1.18.3",
+		"byteball-witness": "git+https://github.com/byteball/byteball-witness.git",
+		"byteballcore": "git+https://github.com/byteball/byteballcore.git",
+		"cookie-parser": "1.4.3",
+		"emailjs": "2.1.0",
+		"express": "4.16.2",
+		"headless-byteball": "git+https://github.com/byteball/headless-byteball.git",
+		"request": "2.83.0",
+		"sc2-sdk": "^1.0.2"
+	}
+}

@@ -1,0 +1,1 @@
+*/20 * * * * cd steem-attestation; node check_daemon.js 1>>~/.config/steem-attestation/check_daemon.log 2>>~/.config/steem-attestation/check_daemon.err
