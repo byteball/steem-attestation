@@ -24,63 +24,64 @@ let api = sc2.Initialize({
 	scope: ['login']
 });
 
-const app = express();
-const server = require('http').Server(app);
+function startWebServer(){
+	const app = express();
+	const server = require('http').Server(app);
 
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
+	app.use(cookieParser());
+	app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/done', (req, res) => {
-	let device = require('byteballcore/device.js');
-	let query = req.query;
-	let cookies = req.cookies;
-	console.error('received request', query);
-	if (!query.access_token || !query.state)
-		return res.send("no access_token or unique_id");
-	db.query("SELECT device_address, user_address FROM users WHERE unique_id=?", [query.state], rows => {
-		if (rows.length === 0)
-			return res.send("no such unique_id");
-		let userInfo = rows[0];
-		if (cookies.referrer && validationUtils.isValidAddress(cookies.referrer)){
-			db.query("INSERT "+db.getIgnore()+" INTO link_referrals (referring_user_address, device_address, type) VALUES(?, ?, 'cookie')", 
-				[cookies.referrer, userInfo.device_address]);
-		}
-		if (!userInfo.user_address){
-			device.sendMessageToDevice(userInfo.device_address, 'text', texts.insertMyAddress());
-			return res.send("Please return to chat, insert your address, and try again");
-		}
-		api.setAccessToken(query.access_token);
-		api.me((err, meResult) => {
-			console.error(err, meResult);
-			if (err)
-				return res.send("failed to get your steem profile");
-			let username = meResult.account.name;
-			let reputation = meResult.account.reputation;
-			let log_reputation = Math.floor( Math.max(Math.log10(Math.abs(reputation)) - 9, 0) * ( (reputation >= 0) ? 1 : -1) * 9 ) + 25;
-			db.query("UPDATE users SET username=? WHERE device_address=?", [username, userInfo.device_address], () => {
-				userInfo.username = username;
-				readOrAssignReceivingAddress(userInfo, (receiving_address, post_publicly) => {
-					db.query("UPDATE receiving_addresses SET reputation=? WHERE receiving_address=?", [log_reputation, receiving_address]);
+	app.get('/done', (req, res) => {
+		let device = require('byteballcore/device.js');
+		let query = req.query;
+		let cookies = req.cookies;
+		console.error('received request', query);
+		if (!query.access_token || !query.state)
+			return res.send("no access_token or unique_id");
+		db.query("SELECT device_address, user_address FROM users WHERE unique_id=?", [query.state], rows => {
+			if (rows.length === 0)
+				return res.send("no such unique_id");
+			let userInfo = rows[0];
+			if (cookies.referrer && validationUtils.isValidAddress(cookies.referrer)){
+				db.query("INSERT "+db.getIgnore()+" INTO link_referrals (referring_user_address, device_address, type) VALUES(?, ?, 'cookie')", 
+					[cookies.referrer, userInfo.device_address]);
+			}
+			if (!userInfo.user_address){
+				device.sendMessageToDevice(userInfo.device_address, 'text', texts.insertMyAddress());
+				return res.send("Please return to chat, insert your address, and try again");
+			}
+			api.setAccessToken(query.access_token);
+			api.me((err, meResult) => {
+				console.error(err, meResult);
+				if (err)
+					return res.send("failed to get your steem profile");
+				let username = meResult.account.name;
+				let reputation = meResult.account.reputation;
+				let log_reputation = Math.floor( Math.max(Math.log10(Math.abs(reputation)) - 9, 0) * ( (reputation >= 0) ? 1 : -1) * 9 ) + 25;
+				db.query("UPDATE users SET username=? WHERE device_address=?", [username, userInfo.device_address], () => {
+					userInfo.username = username;
+					readOrAssignReceivingAddress(userInfo, (receiving_address, post_publicly) => {
+						db.query("UPDATE receiving_addresses SET reputation=? WHERE receiving_address=?", [log_reputation, receiving_address]);
 
-					let response = "Your steem username is "+username+".\n\n";
-					let challenge = username + ' ' + userInfo.user_address;
-					if (post_publicly === null)
-						response += texts.privateOrPublic();
-					else
-						response += texts.pleasePay(receiving_address, conf.priceInBytes, challenge) + '\n\n' +
-							((post_publicly === 0) ? texts.privateChosen() : texts.publicChosen(userInfo.username));
-					device.sendMessageToDevice(userInfo.device_address, 'text', response);
+						let response = "Your steem username is "+username+".\n\n";
+						let challenge = username + ' ' + userInfo.user_address;
+						if (post_publicly === null)
+							response += texts.privateOrPublic();
+						else
+							response += texts.pleasePay(receiving_address, conf.priceInBytes, challenge) + '\n\n' +
+								((post_publicly === 0) ? texts.privateChosen() : texts.publicChosen(userInfo.username));
+						device.sendMessageToDevice(userInfo.device_address, 'text', response);
+					});
 				});
+				res.sendFile(__dirname+'/done.html');
 			});
-			res.sendFile(__dirname+'/done.html');
 		});
 	});
-});
 
-server.listen(conf.webPort, () => {
-	console.log(`== server started listening on ${conf.webPort} port`);
-});
-
+	server.listen(conf.webPort, () => {
+		console.log(`== server started listening on ${conf.webPort} port`);
+	});
+}
 
 /**
  * user pairs his device with bot
@@ -182,6 +183,8 @@ function handleWalletReady() {
 				
 				const consolidation = require('headless-byteball/consolidation.js');
 				consolidation.scheduleConsolidation(steemAttestation.steemAttestorAddress, headlessWallet.signer, 100, 3600*1000);
+				
+				startWebServer();
 			});
 		});
 	});
