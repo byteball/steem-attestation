@@ -36,8 +36,10 @@ function sendAndWriteReward(reward_type, transaction_id){
 	const table = (reward_type === 'referral') ? 'referral_reward_units' : 'reward_units';
 	mutex.lock(['tx-'+transaction_id], unlock => {
 		db.query(
-			`SELECT `+table+`.device_address, reward_date, reward, `+table+`.user_address, contract_reward, contract_address 
+			`SELECT receiving_addresses.device_address, reward_date, reward, `+table+`.user_address, contract_reward, contract_address 
 			FROM `+table+` 
+			CROSS JOIN transactions USING(transaction_id)
+			CROSS JOIN receiving_addresses USING(receiving_address)
 			LEFT JOIN contracts ON `+table+`.user_address=contracts.user_address 
 			WHERE transaction_id=?`, 
 			[transaction_id], 
