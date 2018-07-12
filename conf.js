@@ -34,7 +34,7 @@ exports.bRunWitness = false;
 exports.THRESHOLD_DISTANCE = 20;
 exports.MIN_AVAILABLE_WITNESSINGS = 100;
 
-exports.priceInBytes = 500000;
+exports.priceInBytes = 49000;
 exports.bAcceptUnconfirmedPayments = true;
 
 exports.MAX_REFERRAL_DEPTH = 5;
