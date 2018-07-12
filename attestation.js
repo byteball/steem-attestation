@@ -450,6 +450,7 @@ function respond(from_address, text, response = '') {
 		function checkUserAddress(onDone) {
 			if (validationUtils.isValidAddress(text)) {
 				userInfo.user_address = text;
+				userInfo.username = null;
 				response += texts.goingToAttestAddress(userInfo.user_address);
 				return db.query(
 					'UPDATE users SET user_address=? WHERE device_address=?',
