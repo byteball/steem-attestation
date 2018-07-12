@@ -15,6 +15,8 @@ function retryPostingAttestations() {
 		WHERE attestation_unit IS NULL`,
 		(rows) => {
 			rows.forEach((row) => {
+				if (!row.reputation)
+					throw Error("no rep in tx "+row.transaction_id);
 				let	[attestation, src_profile] = getAttestationPayloadAndSrcProfile(
 					row.user_address,
 					row.username,

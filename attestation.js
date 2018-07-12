@@ -345,6 +345,8 @@ function handleTransactionsBecameStable(arrUnits) {
 function attest(row, proof_type){
 	let device = require('byteballcore/device.js');
 	let transaction_id = row.transaction_id;
+	if (!row.reputation)
+		throw Error("attest: no rep in tx "+transaction_id);
 	db.query(
 		`INSERT ${db.getIgnore()} INTO attestation_units (transaction_id) VALUES (?)`,
 		[transaction_id],
@@ -614,17 +616,23 @@ function respond(from_address, text, response = '') {
  * @param callback
  */
 function readUserInfo(device_address, callback) {
-	db.query('SELECT user_address, username, unique_id, device_address FROM users WHERE device_address = ?', [device_address], (rows) => {
-		if (rows.length) {
-			callback(rows[0]);
+	db.query(
+		`SELECT users.user_address, receiving_addresses.username, unique_id, users.device_address 
+		FROM users LEFT JOIN receiving_addresses USING(device_address, user_address) 
+		WHERE device_address = ?`,
+		[device_address],
+		(rows) => {
+			if (rows.length) {
+				callback(rows[0]);
+			}
+			else {
+				let unique_id = crypto.randomBytes(24).toString("base64");
+				db.query(`INSERT ${db.getIgnore()} INTO users (device_address, unique_id) VALUES(?,?)`, [device_address, unique_id], () => {
+					callback({unique_id, device_address});
+				});
+			}
 		}
-		else {
-			let unique_id = crypto.randomBytes(24).toString("base64");
-			db.query(`INSERT ${db.getIgnore()} INTO users (device_address, unique_id) VALUES(?,?)`, [device_address, unique_id], () => {
-				callback({unique_id, device_address});
-			});
-		}
-	});
+	);
 }
 
 /**
