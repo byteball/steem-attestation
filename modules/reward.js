@@ -125,9 +125,9 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 
 	function selectReferrer() {
 		let arrAddresses = Object.keys(assocMcisByAddress);
+		console.log('findReferrer '+payment_unit+': ancestor addresses: '+arrAddresses.join(', '));
 		if (arrAddresses.length === 0)
 			return tryToFindLinkReferrer();
-		console.log('ancestor addresses: '+arrAddresses.join(', '));
 		db.query(
 			`SELECT 
 				address, user_address, device_address, payload, app
@@ -142,7 +142,7 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 			[steemAttestation.steemAttestorAddress, payment_unit],
 			(rows) => {
 				if (rows.length === 0){
-					console.log("no referrers for payment unit "+payment_unit);
+					console.log("findReferrer "+payment_unit+": no referrers");
 					return tryToFindLinkReferrer();
 				}
 
@@ -177,15 +177,18 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 					throw Error("no best for payment " + payment_unit);
 				}
 
-				console.log("found payment referrer for user "+user_address+": "+best_row.user_address);
-				if (best_row.device_address === device_address) // no self-referring
+				console.log("findReferrer "+payment_unit+": found payment referrer for user "+user_address+": "+best_row.user_address);
+				if (best_row.device_address === device_address){ // no self-referring
+					console.log("findReferrer "+payment_unit+": self-referring");
 					return tryToFindLinkReferrer();
+				}
 				handleReferrer(best_user_id, best_row.user_address, best_row.device_address);
 			}
 		);
 	}
 	
 	function tryToFindLinkReferrer(){
+		console.log("tryToFindLinkReferrer "+user_address);
 		db.query(
 			`SELECT referring_user_address, payload, app, receiving_addresses.device_address, receiving_addresses.user_address, type
 			FROM link_referrals 
@@ -218,7 +221,8 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 			}
 		);
 	}
-
+	
+	console.log("findReferrer "+payment_unit+", "+user_address+", "+device_address);
 	payment_unit ? goBack([payment_unit]) : tryToFindLinkReferrer();
 }
 
