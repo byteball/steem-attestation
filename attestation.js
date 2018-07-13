@@ -347,95 +347,104 @@ function handleTransactionsBecameStable(arrUnits) {
 
 function attest(row, proof_type){
 	let device = require('byteballcore/device.js');
+	const mutex = require('byteballcore/mutex.js');
 	let transaction_id = row.transaction_id;
 	if (!row.reputation)
 		throw Error("attest: no rep in tx "+transaction_id);
-	db.query(
-		`INSERT ${db.getIgnore()} INTO attestation_units (transaction_id) VALUES (?)`,
-		[transaction_id],
-		() => {
+	mutex.lock(['tx-'+transaction_id], unlock => {
+		db.query(
+			`INSERT ${db.getIgnore()} INTO attestation_units (transaction_id) VALUES (?)`,
+			[transaction_id],
+			() => {
 
-			let	[attestation, src_profile] = steemAttestation.getAttestationPayloadAndSrcProfile(
-				row.user_address,
-				row.username,
-				row.reputation,
-				row.post_publicly
-			);
+				let	[attestation, src_profile] = steemAttestation.getAttestationPayloadAndSrcProfile(
+					row.user_address,
+					row.username,
+					row.reputation,
+					row.post_publicly
+				);
 
-			steemAttestation.postAndWriteAttestation(
-				transaction_id,
-				steemAttestation.steemAttestorAddress,
-				attestation,
-				src_profile
-			);
+				steemAttestation.postAndWriteAttestation(
+					transaction_id,
+					steemAttestation.steemAttestorAddress,
+					attestation,
+					src_profile
+				);
 
-			let rewardInUSD = getRewardInUSDByReputation(row.reputation);
-			if (!rewardInUSD)
-				return;
-			
-			if (proof_type === 'signature')
-				rewardInUSD *= conf.signingRewardShare;
+				let rewardInUSD = getRewardInUSDByReputation(row.reputation);
+				if (!rewardInUSD)
+					return unlock();
 
-			let fullRewardInBytes = conversion.getPriceInBytes(rewardInUSD);
-			let rewardInBytes = Math.round(fullRewardInBytes * conf.rewardContractShare);
-			let contractRewardInBytes = Math.round(fullRewardInBytes * (1-conf.rewardContractShare));
-			db.query(
-				`INSERT ${db.getIgnore()} INTO reward_units
-				(transaction_id, device_address, user_address, username, user_id, reward, contract_reward)
-				VALUES (?, ?,?,?,?, ?,?)`,
-				[transaction_id, row.device_address, row.user_address, row.username, attestation.profile.user_id, rewardInBytes, contractRewardInBytes],
-				async (res) => {
-					console.error(`reward_units insertId: ${res.insertId}, affectedRows: ${res.affectedRows}`);
-					if (!res.affectedRows)
-						return console.log(`duplicate user_address or user_id: ${row.user_address}, ${attestation.profile.user_id}`);
+				if (proof_type === 'signature')
+					rewardInUSD *= conf.signingRewardShare;
 
-					let [contract_address, vesting_ts] = await contract.createContract(row.user_address, row.device_address);
-					device.sendMessageToDevice(row.device_address, 'text', texts.attestedFirstTimeBonus(rewardInUSD, rewardInBytes, contractRewardInBytes, vesting_ts));
-					reward.sendAndWriteReward('attestation', transaction_id);
-
-					let referralRewardInUSD = getRewardInUSDByReputation(row.reputation);
-					if (!referralRewardInUSD)
-						return;
-
-					let referralRewardInBytes = 
-						conversion.getPriceInBytes(referralRewardInUSD * (1-conf.referralRewardContractShare));
-					let contractReferralRewardInBytes = 
-						conversion.getPriceInBytes(referralRewardInUSD * conf.referralRewardContractShare);
-					reward.findReferrer(
-						row.payment_unit, row.user_address, row.device_address,
-						async (referring_user_id, referring_user_address, referring_user_device_address) => {
-							if (!referring_user_address) {
-								// console.error("no referring user for " + row.user_address);
-								return console.log("no referring user for " + row.user_address);
-							}
-							let [referrer_contract_address, referrer_vesting_date_ts] = 
-								await contract.getReferrerContract(referring_user_address, referring_user_device_address);
-
-							db.query(
-								`INSERT ${db.getIgnore()} INTO referral_reward_units
-								(transaction_id, user_address, user_id, new_user_address, new_user_id, reward, contract_reward)
-								VALUES (?, ?,?, ?,?, ?,?)`,
-								[transaction_id,
-									referring_user_address, referring_user_id,
-									row.user_address, attestation.profile.user_id,
-									referralRewardInBytes, contractReferralRewardInBytes],
-								(res) => {
-									console.log(`referral_reward_units insertId: ${res.insertId}, affectedRows: ${res.affectedRows}`);
-									if (!res.affectedRows)
-										return notifications.notifyAdmin("duplicate referral reward", `referral reward for new user ${row.user_address} ${attestation.profile.user_id} already written`);
-
-									device.sendMessageToDevice(referring_user_device_address, 'text', texts.referredUserBonus(referralRewardInUSD, referralRewardInBytes, contractReferralRewardInBytes, referrer_vesting_date_ts));
-									reward.sendAndWriteReward('referral', transaction_id);
-								}
-							);
+				let fullRewardInBytes = conversion.getPriceInBytes(rewardInUSD);
+				let rewardInBytes = Math.round(fullRewardInBytes * conf.rewardContractShare);
+				let contractRewardInBytes = Math.round(fullRewardInBytes * (1-conf.rewardContractShare));
+				db.query(
+					`INSERT ${db.getIgnore()} INTO reward_units
+					(transaction_id, device_address, user_address, username, user_id, reward, contract_reward)
+					VALUES (?, ?,?,?,?, ?,?)`,
+					[transaction_id, row.device_address, row.user_address, row.username, attestation.profile.user_id, rewardInBytes, contractRewardInBytes],
+					async (res) => {
+						console.error(`reward_units insertId: ${res.insertId}, affectedRows: ${res.affectedRows}`);
+						if (!res.affectedRows){
+							console.log(`duplicate user_address or user_id: ${row.user_address}, ${attestation.profile.user_id}`);
+							return unlock();
 						}
-					);
+						
+						let [contract_address, vesting_ts] = await contract.createContract(row.user_address, row.device_address);
+						device.sendMessageToDevice(row.device_address, 'text', texts.attestedFirstTimeBonus(rewardInUSD, rewardInBytes, contractRewardInBytes, vesting_ts));
+						reward.sendAndWriteReward('attestation', transaction_id);
 
-				}
-			);
+						let referralRewardInUSD = getRewardInUSDByReputation(row.reputation);
+						if (!referralRewardInUSD)
+							return unlock();
 
-		}
-	);
+						let referralRewardInBytes = 
+							conversion.getPriceInBytes(referralRewardInUSD * (1-conf.referralRewardContractShare));
+						let contractReferralRewardInBytes = 
+							conversion.getPriceInBytes(referralRewardInUSD * conf.referralRewardContractShare);
+						reward.findReferrer(
+							row.payment_unit, row.user_address, row.device_address,
+							async (referring_user_id, referring_user_address, referring_user_device_address) => {
+								if (!referring_user_address) {
+									// console.error("no referring user for " + row.user_address);
+									console.log("no referring user for " + row.user_address);
+									return unlock();
+								}
+								let [referrer_contract_address, referrer_vesting_date_ts] = 
+									await contract.getReferrerContract(referring_user_address, referring_user_device_address);
+
+								db.query(
+									`INSERT ${db.getIgnore()} INTO referral_reward_units
+									(transaction_id, user_address, user_id, new_user_address, new_user_id, reward, contract_reward)
+									VALUES (?, ?,?, ?,?, ?,?)`,
+									[transaction_id,
+										referring_user_address, referring_user_id,
+										row.user_address, attestation.profile.user_id,
+										referralRewardInBytes, contractReferralRewardInBytes],
+									(res) => {
+										console.log(`referral_reward_units insertId: ${res.insertId}, affectedRows: ${res.affectedRows}`);
+										if (!res.affectedRows){
+											notifications.notifyAdmin("duplicate referral reward", `referral reward for new user ${row.user_address} ${attestation.profile.user_id} already written`);
+											return unlock();
+										}
+
+										device.sendMessageToDevice(referring_user_device_address, 'text', texts.referredUserBonus(referralRewardInUSD, referralRewardInBytes, contractReferralRewardInBytes, referrer_vesting_date_ts));
+										reward.sendAndWriteReward('referral', transaction_id);
+										unlock();
+									}
+								);
+							}
+						);
+
+					}
+				);
+
+			}
+		);
+	});
 }
 
 
