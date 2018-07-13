@@ -323,7 +323,7 @@ function checkPayment(row, onDone) {
 function handleTransactionsBecameStable(arrUnits) {
 	let device = require('byteballcore/device.js');
 	db.query(
-		`SELECT transaction_id, device_address, user_address, username, reputation, post_publicly
+		`SELECT transaction_id, device_address, user_address, username, reputation, post_publicly, payment_unit
 		FROM accepted_payments
 		JOIN receiving_addresses USING(receiving_address)
 		WHERE payment_unit IN(?)`,
