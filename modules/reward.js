@@ -130,7 +130,7 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 			return tryToFindLinkReferrer();
 		db.query(
 			`SELECT 
-				address, user_address, device_address, payload, app
+				address, user_address, device_address, username, payload, app
 			FROM attestations
 			JOIN messages USING(unit, message_index)
 			JOIN attestation_units ON unit=attestation_unit
@@ -182,7 +182,7 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 					console.log("findReferrer "+payment_unit+": self-referring");
 					return tryToFindLinkReferrer();
 				}
-				handleReferrer(best_user_id, best_row.user_address, best_row.device_address);
+				handleReferrer(best_user_id, best_row.user_address, best_row.device_address, best_row.username);
 			}
 		);
 	}
@@ -190,7 +190,8 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 	function tryToFindLinkReferrer(){
 		console.log("tryToFindLinkReferrer "+user_address);
 		db.query(
-			`SELECT referring_user_address, payload, app, receiving_addresses.device_address, receiving_addresses.user_address, type
+			`SELECT referring_user_address, payload, app, type,
+			receiving_addresses.device_address, receiving_addresses.user_address, receiving_addresses.username
 			FROM link_referrals 
 			CROSS JOIN attestations ON referring_user_address=attestations.address AND attestor_address=?
 			CROSS JOIN messages USING(unit, message_index)
@@ -217,7 +218,7 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 				let referring_user_id = payload.profile.user_id;
 				if (!referring_user_id)
 					throw Error("no user_id for device " + device_address + " payload " + row.payload);
-				handleReferrer(referring_user_id, row.referring_user_address, row.device_address);
+				handleReferrer(referring_user_id, row.referring_user_address, row.device_address, row.username);
 			}
 		);
 	}
