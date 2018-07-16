@@ -96,6 +96,8 @@ function retrySendingRewards() {
 function findReferrer(payment_unit, user_address, device_address, handleReferrer) {
 	let assocMcisByAddress = {};
 	let depth = 0;
+	if (!steemAttestation.steemAttestorAddress)
+		throw Error('no steemAttestorAddress in reward');
 
 	function goBack(arrUnits) {
 		depth++;

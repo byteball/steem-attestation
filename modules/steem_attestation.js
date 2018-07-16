@@ -7,6 +7,8 @@ const notifications = require('./notifications');
 const texts = require('./texts');
 
 function retryPostingAttestations() {
+	if (!exports.steemAttestorAddress)
+		throw Error('no steemAttestorAddress');
 	db.query(
 		`SELECT transaction_id, user_address, username, reputation, post_publicly
 		FROM attestation_units
