@@ -431,7 +431,7 @@ function attest(row, proof_type){
 											return unlock();
 										}
 
-										device.sendMessageToDevice(referring_user_device_address, 'text', texts.referredUserBonus(referralRewardInUSD, referralRewardInBytes, contractReferralRewardInBytes, referrer_vesting_date_ts));
+										device.sendMessageToDevice(referring_user_device_address, 'text', texts.referredUserBonus(referralRewardInUSD, referralRewardInBytes, contractReferralRewardInBytes, referrer_vesting_date_ts, row.username));
 										reward.sendAndWriteReward('referral', transaction_id);
 										unlock();
 									}

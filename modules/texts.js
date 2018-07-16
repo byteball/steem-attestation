@@ -100,10 +100,10 @@ exports.attestedFirstTimeBonus = (rewardInUSD, rewardInBytes, contractRewardInBy
 	return text;
 };
 
-exports.referredUserBonus = (referralRewardInUSD, referralRewardInBytes, contractReferralRewardInBytes, referrer_vesting_date_ts) => {
+exports.referredUserBonus = (referralRewardInUSD, referralRewardInBytes, contractReferralRewardInBytes, referrer_vesting_date_ts, username) => {
 	let contractReferralRewardInUSD = referralRewardInUSD * conf.referralRewardContractShare;
 	let cashReferralRewardInUSD = referralRewardInUSD - contractReferralRewardInUSD;
-	let text =  `You referred a user who has just verified his steem username and you will receive a reward of $${cashReferralRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})} (${(referralRewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})} GB) from Byteball distribution fund.`;
+	let text =  `You referred user ${username} who has just verified his steem username and you will receive a reward of $${cashReferralRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})} (${(referralRewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})} GB) from Byteball distribution fund.`;
 	if (contractReferralRewardInBytes)
 		text += "  You will also receive a reward of $"+contractReferralRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})+" ("+(contractReferralRewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})+" GB) that will be locked on a smart contract for "+conf.contractTerm+" year and can be spent only after "+new Date(referrer_vesting_date_ts).toDateString()+".";
 	text += `\n\nThank you for bringing in a new byteballer, the value of the ecosystem grows with each new user!`;
