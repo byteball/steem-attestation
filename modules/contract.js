@@ -6,6 +6,8 @@ const reward = require('./reward');
 
 
 function createContract(user_address, device_address){
+	if (!reward.distributionAddress)
+		throw Error('no distributionAddress');
 	let device = require('byteballcore/device.js');
 	let date = new Date();
 	date.setUTCHours(0,0,0,0);
