@@ -136,11 +136,12 @@ function findReferrer(payment_unit, user_address, device_address, handleReferrer
 			FROM attestations
 			JOIN messages USING(unit, message_index)
 			JOIN attestation_units ON unit=attestation_unit
-			JOIN accepted_payments USING(transaction_id)
+			JOIN transactions USING(transaction_id)
 			JOIN receiving_addresses USING(receiving_address)
+			LEFT JOIN accepted_payments USING(transaction_id)
 			WHERE address IN(${arrAddresses.map(db.escape).join(', ')}) 
 				AND +attestor_address=? 
-				AND accepted_payments.payment_unit!=?`,
+				AND (accepted_payments.payment_unit IS NULL OR accepted_payments.payment_unit!=?)`,
 			[steemAttestation.steemAttestorAddress, payment_unit],
 			(rows) => {
 				if (rows.length === 0){
