@@ -349,7 +349,7 @@ function attest(row, proof_type){
 	let device = require('byteballcore/device.js');
 	const mutex = require('byteballcore/mutex.js');
 	let transaction_id = row.transaction_id;
-	if (!row.reputation)
+	if (row.reputation === null)
 		throw Error("attest: no rep in tx "+transaction_id);
 	mutex.lock(['tx-'+transaction_id], unlock => {
 		db.query(
