@@ -376,7 +376,7 @@ function attest(row, proof_type){
 				if (!rewardInUSD)
 					return unlock();
 
-				if (!row.is_eligible){
+				if (row.is_eligible === 0){
 					console.log('user '+row.username+' '+row.user_address+' is not eligible for reward');
 					device.sendMessageToDevice(row.device_address, 'text', "You are not eligible for attestation reward as your account was created after Jul 12, but you can still refer new users and earn referral rewards.");
 					return unlock();
