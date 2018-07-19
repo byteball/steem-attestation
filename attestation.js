@@ -55,13 +55,14 @@ function startWebServer(){
 				console.error(err, meResult);
 				if (err)
 					return res.send("failed to get your steem profile");
+				let is_eligible = (meResult.account.created < '2018-07-12');
 				let username = meResult.account.name;
 				let reputation = meResult.account.reputation;
 				let log_reputation = Math.floor( Math.max(Math.log10(Math.abs(reputation)) - 9, 0) * ( (reputation >= 0) ? 1 : -1) * 9 ) + 25;
 				db.query("UPDATE users SET username=? WHERE device_address=?", [username, userInfo.device_address], () => {
 					userInfo.username = username;
 					readOrAssignReceivingAddress(userInfo, (receiving_address, post_publicly) => {
-						db.query("UPDATE receiving_addresses SET reputation=? WHERE receiving_address=?", [log_reputation, receiving_address]);
+						db.query("UPDATE receiving_addresses SET reputation=?, is_eligible=? WHERE receiving_address=?", [log_reputation, is_eligible, receiving_address]);
 
 						let response = "Your steem username is "+username+".\n\n";
 						let challenge = username + ' ' + userInfo.user_address;
@@ -323,7 +324,7 @@ function checkPayment(row, onDone) {
 function handleTransactionsBecameStable(arrUnits) {
 	let device = require('byteballcore/device.js');
 	db.query(
-		`SELECT transaction_id, device_address, user_address, username, reputation, post_publicly, payment_unit
+		`SELECT transaction_id, device_address, user_address, username, reputation, is_eligible, post_publicly, payment_unit
 		FROM accepted_payments
 		JOIN receiving_addresses USING(receiving_address)
 		WHERE payment_unit IN(?)`,
@@ -375,6 +376,12 @@ function attest(row, proof_type){
 				if (!rewardInUSD)
 					return unlock();
 
+				if (!row.is_eligible){
+					console.log('user '+row.username+' '+row.user_address+' is not eligible for reward');
+					device.sendMessageToDevice(row.device_address, 'text', "You are not eligible for attestation reward as your account was created after Jul 12, but you can still refer new users and earn referral rewards.");
+					return unlock();
+				}
+				
 				if (proof_type === 'signature')
 					rewardInUSD *= conf.signingRewardShare;
 
@@ -551,7 +558,7 @@ function respond(from_address, text, response = '') {
 												[transaction_id, userInfo.user_address, signedMessageJson],
 												() => {
 													db.query(
-														`SELECT device_address, user_address, username, reputation, post_publicly
+														`SELECT device_address, user_address, username, reputation, is_eligible, post_publicly
 														FROM receiving_addresses WHERE receiving_address=?`,
 														[receiving_address],
 														rows => {

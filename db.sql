@@ -13,6 +13,7 @@ CREATE TABLE receiving_addresses (
 	user_address CHAR(32) NOT NULL,
 	username VARCHAR(64) NOT NULL,
 	reputation INT NULL,
+	is_eligible TINYINT NULL,
 	creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	post_publicly TINYINT NULL,
 	price INT NULL,
@@ -123,3 +124,7 @@ CREATE TABLE referral_reward_units (
 	FOREIGN KEY (new_user_id) REFERENCES reward_units(user_id),
 	FOREIGN KEY (reward_unit) REFERENCES units(unit)
 );
+
+/*
+ALTER TABLE receiving_addresses ADD COLUMN is_eligible TINYINT NULL;
+*/
