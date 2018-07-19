@@ -41,8 +41,8 @@ exports.MAX_REFERRAL_DEPTH = 5;
 
 exports.arrReputationRewardsInUsd = [
 //	{threshold: 25, rewardInUsd: 0.02},
-	{threshold: 30, rewardInUsd: 10},
-	{threshold: 40, rewardInUsd: 20},
+	{threshold: 30, rewardInUsd: 5},
+	{threshold: 40, rewardInUsd: 10},
 	{threshold: 50, rewardInUsd: 40},
 	{threshold: 60, rewardInUsd: 80},
 	{threshold: 70, rewardInUsd: 160},
