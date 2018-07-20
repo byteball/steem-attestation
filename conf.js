@@ -48,7 +48,7 @@ exports.arrReputationRewardsInUsd = [
 	{threshold: 70, rewardInUsd: 160},
 ];
 
-exports.signingRewardShare = 0.8;
+exports.signingRewardShare = 1;
 
 exports.rewardContractShare = 0.5;
 exports.referralRewardContractShare = 0.75;
