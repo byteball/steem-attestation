@@ -200,11 +200,17 @@ function moveFundsToAttestorAddresses() {
 	mutex.lock(['moveFundsToAttestorAddresses'], unlock => {
 		console.log('moveFundsToAttestorAddresses');
 		db.query(
-			`SELECT DISTINCT receiving_address
-			FROM receiving_addresses 
-			CROSS JOIN outputs ON receiving_address = address 
-			JOIN units USING(unit)
-			WHERE is_stable=1 AND is_spent=0 AND asset IS NULL
+			`SELECT * FROM (
+				SELECT DISTINCT receiving_address
+				FROM receiving_addresses 
+				CROSS JOIN outputs ON receiving_address = address 
+				JOIN units USING(unit)
+				WHERE is_stable=1 AND is_spent=0 AND asset IS NULL
+			) AS t
+			WHERE NOT EXISTS (
+				SELECT * FROM units CROSS JOIN unit_authors USING(unit)
+				WHERE is_stable=0 AND unit_authors.address=t.receiving_address AND definition_chash IS NOT NULL
+			)
 			LIMIT ?`,
 			[constants.MAX_AUTHORS_PER_UNIT],
 			(rows) => {
