@@ -70,9 +70,13 @@ exports.publicChosen = (username) => {
 };
 
 exports.pleasePay = (receivingAddress, price, challenge) => {
-	let text = `Please pay for the attestation: [attestation payment](byteball:${receivingAddress}?amount=${price}).\n\nAlternatively, you can prove ownership of your address by signing a message: [message](sign-message-request:${challenge})`;
-	text +=  (conf.signingRewardShare === 1) ? '.' : `, in this case your attestation reward (if any) will be ${conf.signingRewardShare*100}% of the normal reward.`;
-	return text;
+	if (conf.bAllowProofByPayment){
+		let text = `Please pay for the attestation: [attestation payment](byteball:${receivingAddress}?amount=${price}).\n\nAlternatively, you can prove ownership of your address by signing a message: [message](sign-message-request:${challenge})`;
+		text +=  (conf.signingRewardShare === 1) ? '.' : `, in this case your attestation reward (if any) will be ${conf.signingRewardShare*100}% of the normal reward.`;
+		return text;
+	}
+	else
+		return `Please prove ownership of your address by signing a message: [message](sign-message-request:${challenge}).`;
 };
 
 exports.pleasePayOrPrivacy = (receivingAddress, price, challenge, postPublicly) => {
