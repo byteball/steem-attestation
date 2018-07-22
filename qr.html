@@ -46,7 +46,7 @@
 				$('#qr_code').html('code not found');
 			}
 			else {
-				$('#qr_code').qrcode({width: 512, height: 512, text: params.code});
+				$('#qr_code').qrcode({width: 512, height: 512, text: decodeURIComponent(params.code)});
 			}
 			// for parsing windows.location.search or windows.location.hash
 			function parseParams(params) {
