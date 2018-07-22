@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="shortcut icon" href="https://byteball.org/static/favicon.ico">
+		<title>Referral QR code</title>
+		<style>
+			html,body
+			{
+				height: 100%;
+				font-family: sans-serif;
+				color: #444;
+				line-height: 2;
+			}
+			body
+			{
+			   display: table;
+			   margin: 0 auto;
+			}
+
+			.container
+			{  
+				height: 100%;
+				display: table-cell;
+				vertical-align: middle;
+				text-align: center;
+			}
+			#qr_code canvas {
+				width: 80%;
+				height: 80%;
+				padding: 25px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div id="qr_code"></div>
+		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js" integrity="sha256-9MzwK2kJKBmsJFdccXoIDDtsbWFh8bjYK/C7UjB1Ay0=" crossorigin="anonymous"></script>
+		<script type="text/javascript">
+		$(document).ready(function() {
+			var params = parseParams(window.location.search);
+			if (!params.code) {
+				$('#qr_code').html('code not found');
+			}
+			else {
+				$('#qr_code').qrcode({width: 512, height: 512, text: params.code});
+			}
+			// for parsing windows.location.search or windows.location.hash
+			function parseParams(params) {
+				var hash = params.substring(1);
+				var param_list = {}
+				$.each(hash.split('&') , function( key, value ) {
+					var temp = value.split('=');
+					param_list[temp[0]] = temp[1];
+				});
+				return param_list;
+			}
+		});
+		</script>
+	</body>
+</html>
