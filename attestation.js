@@ -79,10 +79,6 @@ function startWebServer(){
 		});
 	});
 
-	app.get('/qr', (req, res) => {
-		res.sendFile(__dirname+'/qr.html');
-	});
-
 	server.listen(conf.webPort, () => {
 		console.log(`== server started listening on ${conf.webPort} port`);
 	});
