@@ -24,10 +24,13 @@ exports.greeting = () => {
 
 exports.weHaveReferralProgram = (user_address) => {
 	const device = require('byteballcore/device.js');
+	const invite_code = "byteball:"+device.getMyDevicePubKey()+"@"+conf.hub+"#"+user_address;
+	const qr_url = conf.site+"/qr/?code="+ encodeURIComponent(invite_code);
 	return [
-		"Remember, we have a referral program: you get rewards by recommending new users to link their Steem and Byteball accounts.  There are "+(conf.bAllowProofByPayment ? 3 : 2)+" ways to do it and ensure that the referrals are tracked to you:\n" +
+		"Remember, we have a referral program: you get rewards by recommending new users to link their Steem and Byteball accounts.  There are "+(conf.bAllowProofByPayment ? 4 : 3)+" ways to do it and ensure that the referrals are tracked to you:\n" +
 		(conf.bAllowProofByPayment ? "➡ you send Bytes from your attested address to a new user who is not attested yet, and he/she uses those Bytes to pay for a successful attestation;\n" : "") +
-		"➡ have new users click this link (you can publish it e.g. on your blog) byteball:"+device.getMyDevicePubKey()+"@"+conf.hub+"#"+user_address+", which opens this attestation bot in the user's wallet, the wallet has to be already installed;\n" +
+		"➡ have new users scan this QR code with wallet app "+qr_url+" , which opens this attestation bot in the user's wallet, the wallet has to be already installed;\n" +
+		"➡ have new users copy-paste this to \"Chat > Add a new device > Accept invitation from the other device\" "+invite_code+" , which opens this attestation bot in the user's wallet, the wallet has to be already installed;\n" +
 		"➡ have new users click this link (you can publish it e.g. on your blog) "+conf.site+"/#"+user_address+" which sets a tracking cookie and redirects to wallet download.\n\n" +
 		`Your reward is exactly same as the new user's reward.  25% of your reward will be immediately available, the other 75% will be locked on a smart contract and can be spent after 1 year.`
 	].join('');
