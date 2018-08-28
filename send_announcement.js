@@ -1,6 +1,6 @@
 /*jslint node: true */
 "use strict";
-var async = require('byteballcore/node_modules/async');
+var async = require('async');
 var db = require('byteballcore/db.js');
 var eventBus = require('byteballcore/event_bus.js');
 var headlessWallet = require('headless-byteball');
