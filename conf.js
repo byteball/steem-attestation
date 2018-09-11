@@ -43,7 +43,7 @@ exports.arrReputationRewardsInUsd = [
 //	{threshold: 25, rewardInUsd: 0.02},
 //	{threshold: 35, rewardInUsd: 5},
 	{threshold: 45, rewardInUsd: 10},
-	{threshold: 50, rewardInUsd: 40},
+	{threshold: 50, rewardInUsd: 20},
 	{threshold: 60, rewardInUsd: 80},
 	{threshold: 70, rewardInUsd: 160},
 ];
