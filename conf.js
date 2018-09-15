@@ -22,9 +22,6 @@ exports.bSingleAddress = false;
 exports.bStaticChangeAddress = true;
 exports.KEYS_FILENAME = 'keys.json';
 
-// smtp
-exports.bUseSmtp = false;
-
 // emails
 exports.admin_email = '';
 exports.from_email = '';
