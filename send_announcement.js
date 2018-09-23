@@ -5,7 +5,7 @@ var db = require('byteballcore/db.js');
 var eventBus = require('byteballcore/event_bus.js');
 var headlessWallet = require('headless-byteball');
 
-
+/*
 const announcement = `Dear Steemians!
 
 Byteball is thrilled to be featured in Binance's monthly community coin vote.
@@ -19,6 +19,9 @@ Team Byteball
 
 https://www.binance.com/vote.html
 `;
+*/
+const announcement = "Byteball contest with 22 GB in prizes ends 30 September. You can still enter. Only 7 people with entries so far. Hurry! See https://goo.gl/33M5za";
+
 //const optout_text = "\n\nIf you don't want to receive news here, [click here to opt out](command:optout).";
 const message = announcement;// + optout_text;
 
