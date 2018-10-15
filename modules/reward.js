@@ -34,9 +34,12 @@ function sendReward(outputs, device_address, onDone){
 function sendAndWriteReward(reward_type, transaction_id){
 	const mutex = require('byteballcore/mutex.js');
 	const table = (reward_type === 'referral') ? 'referral_reward_units' : 'reward_units';
+	const device_address_column = (reward_type === 'referral')
+		? `(SELECT device_address FROM receiving_addresses WHERE receiving_addresses.user_address=`+table+`.user_address ORDER BY rowid DESC LIMIT 1) AS device_address`
+		: 'receiving_addresses.device_address';
 	mutex.lock(['tx-'+transaction_id], unlock => {
 		db.query(
-			`SELECT receiving_addresses.device_address, reward_date, reward, `+table+`.user_address, contract_reward, contract_address 
+			`SELECT `+device_address_column+`, reward_date, reward, `+table+`.user_address, contract_reward, contract_address 
 			FROM `+table+` 
 			CROSS JOIN transactions USING(transaction_id)
 			CROSS JOIN receiving_addresses USING(receiving_address)
