@@ -20,7 +20,9 @@ Team Byteball
 https://www.binance.com/vote.html
 `;
 */
-const announcement = "Byteball contest with 22 GB in prizes ends 30 September. You can still enter. Only 7 people with entries so far. Hurry! See https://goo.gl/33M5za";
+//const announcement = "Byteball contest with 22 GB in prizes ends 30 September. You can still enter. Only 7 people with entries so far. Hurry! See https://goo.gl/33M5za";
+
+const announcement = "We are extremely pleased to announce our first decentralized witness candidate. This is a major milestone for Byteball. Read the full article here: https://medium.com/byteball/first-decentralized-witness-candidate-rogier-eijkelhof-9e5619166334";
 
 //const optout_text = "\n\nIf you don't want to receive news here, [click here to opt out](command:optout).";
 const message = announcement;// + optout_text;
