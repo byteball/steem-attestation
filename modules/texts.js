@@ -24,8 +24,8 @@ exports.greeting = () => {
 
 exports.weHaveReferralProgram = (user_address) => {
 	const device = require('byteballcore/device.js');
-	const invite_code = "byteball:"+device.getMyDevicePubKey()+"@"+conf.hub+"#"+user_address;
-	const qr_url = conf.site+"/qr/?code="+ encodeURIComponent(invite_code);
+	const invite_code = device.getMyDevicePubKey()+"@"+conf.hub+"#"+user_address;
+	const qr_url = conf.site+"/qr/?code="+ encodeURIComponent("byteball:"+ invite_code);
 	return [
 		"Remember, we have a referral program: you get rewards by recommending new users to link their Steem and Byteball accounts.  There are "+(conf.bAllowProofByPayment ? 4 : 3)+" ways to do it and ensure that the referrals are tracked to you:\n" +
 		(conf.bAllowProofByPayment ? "➡ you send Bytes from your attested address to a new user who is not attested yet, and he/she uses those Bytes to pay for a successful attestation;\n" : "") +
