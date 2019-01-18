@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
-const conf = require('byteballcore/conf');
-const db = require('byteballcore/db');
+const conf = require('ocore/conf');
+const db = require('ocore/db');
 const notifications = require('./notifications');
 const steemAttestation = require('./steem_attestation');
 
@@ -18,7 +18,7 @@ function sendReward(outputs, device_address, onDone){
 	}, (err, unit) => {
 		if (err){
 			console.log("failed to send reward: "+err);
-			let balances = require('byteballcore/balances');
+			let balances = require('ocore/balances');
 			balances.readOutputsBalance(exports.distributionAddress, (balance) => {
 				console.error(balance);
 				notifications.notifyAdmin('failed to send reward', err + ", balance: " + JSON.stringify(balance));
@@ -32,7 +32,7 @@ function sendReward(outputs, device_address, onDone){
 
 
 function sendAndWriteReward(reward_type, transaction_id){
-	const mutex = require('byteballcore/mutex.js');
+	const mutex = require('ocore/mutex.js');
 	const table = (reward_type === 'referral') ? 'referral_reward_units' : 'reward_units';
 	const device_address_column = (reward_type === 'referral')
 		? `(SELECT device_address FROM receiving_addresses WHERE receiving_addresses.user_address=`+table+`.user_address ORDER BY rowid DESC LIMIT 1) AS device_address`
@@ -68,7 +68,7 @@ function sendAndWriteReward(reward_type, transaction_id){
 						"UPDATE "+table+" SET reward_unit=?, reward_date="+db.getNow()+" WHERE transaction_id=?", 
 						[unit, transaction_id], 
 						() => {
-							let device = require('byteballcore/device.js');
+							let device = require('ocore/device.js');
 							device.sendMessageToDevice(row.device_address, 'text', "Sent the "+reward_type+" reward");
 							unlock();
 						}

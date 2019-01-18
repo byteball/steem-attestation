@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
 const request = require('request');
-const eventBus = require('byteballcore/event_bus.js');
+const eventBus = require('ocore/event_bus.js');
 const notifications = require('./notifications');
 
 let GBYTE_BTC_rate;

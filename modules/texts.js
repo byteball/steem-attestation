@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
-const desktopApp = require('byteballcore/desktop_app.js');
-const conf = require('byteballcore/conf');
+const desktopApp = require('ocore/desktop_app.js');
+const conf = require('ocore/conf');
 
 /**
  * responses for clients
@@ -23,7 +23,7 @@ exports.greeting = () => {
 };
 
 exports.weHaveReferralProgram = (user_address) => {
-	const device = require('byteballcore/device.js');
+	const device = require('ocore/device.js');
 	const invite_code = device.getMyDevicePubKey()+"@"+conf.hub+"#"+user_address;
 	const qr_url = conf.site+"/qr/?code="+ encodeURIComponent("byteball:"+ invite_code);
 	return [

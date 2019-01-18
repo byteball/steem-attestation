@@ -1,8 +1,8 @@
 /*jslint node: true */
 "use strict";
 var async = require('async');
-var db = require('byteballcore/db.js');
-var eventBus = require('byteballcore/event_bus.js');
+var db = require('ocore/db.js');
+var eventBus = require('ocore/event_bus.js');
 var headlessWallet = require('headless-byteball');
 
 /*
@@ -30,7 +30,7 @@ const message = announcement;// + optout_text;
 headlessWallet.setupChatEventHandlers();
 
 function sendAnnouncement(){
-	var device = require('byteballcore/device.js');
+	var device = require('ocore/device.js');
 	db.query(
 		"SELECT device_address FROM users",
 		rows => {
@@ -56,7 +56,7 @@ function sendAnnouncement(){
 }
 
 eventBus.on('text', function(from_address, text){
-	var device = require('byteballcore/device.js');
+	var device = require('ocore/device.js');
 	console.log('text from '+from_address+': '+text);
 	text = text.trim().toLowerCase();
 	/*if (text === 'optout'){
