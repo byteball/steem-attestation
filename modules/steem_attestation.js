@@ -140,7 +140,10 @@ function postAttestation(attestor_address, payload, onDone) {
 }
 
 function getUserId(profile){
-	return objectHash.getBase64Hash([profile, conf.salt]);
+	let shortProfile = {
+		steem_username: profile.steem_username,
+	};
+	return objectHash.getBase64Hash([shortProfile, conf.salt]);
 }
 
 function getAttestationPayloadAndSrcProfile(user_address, steem_username, reputation, bPublic) {
