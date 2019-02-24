@@ -8,7 +8,7 @@ const steemAttestation = require('./steem_attestation');
 exports.distributionAddress = null;
 
 function sendReward(outputs, device_address, onDone){
-	let headlessWallet = require('headless-byteball');
+	let headlessWallet = require('headless-obyte');
 	headlessWallet.sendMultiPayment({
 		asset: null,
 		base_outputs: outputs,

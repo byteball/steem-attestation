@@ -11,7 +11,7 @@ exports.greeting = () => {
 	return [
 		"Here you can attest your steem username.\n\n",
 
-		"Your steem username will be linked to your Byteball address, the link can be either made public (if you choose so) or saved privately in your wallet. ",
+		"Your steem username will be linked to your Obyte address, the link can be either made public (if you choose so) or saved privately in your wallet. ",
 		"In the latter case, only a proof of attestation will be posted publicly on the distributed ledger. ",
 		"\n\n",
 
@@ -27,7 +27,7 @@ exports.weHaveReferralProgram = (user_address) => {
 	const invite_code = device.getMyDevicePubKey()+"@"+conf.hub+"#"+user_address;
 	const qr_url = conf.site+"/qr/?code="+ encodeURIComponent("byteball:"+ invite_code);
 	return [
-		"Remember, we have a referral program: you get rewards by recommending new users to link their Steem and Byteball accounts.  There are "+(conf.bAllowProofByPayment ? 4 : 3)+" ways to do it and ensure that the referrals are tracked to you:\n" +
+		"Remember, we have a referral program: you get rewards by recommending new users to link their Steem and Obyte accounts.  There are "+(conf.bAllowProofByPayment ? 4 : 3)+" ways to do it and ensure that the referrals are tracked to you:\n" +
 		(conf.bAllowProofByPayment ? "➡ you send Bytes from your attested address to a new user who is not attested yet, and he/she uses those Bytes to pay for a successful attestation;\n" : "") +
 		"➡ have new users scan this QR code with wallet app "+qr_url+" , which opens this attestation bot in the user's wallet, the wallet has to be already installed;\n" +
 		"➡ have new users copy-paste this to \"Chat > Add a new device > Accept invitation from the other device\" "+invite_code+" , which opens this attestation bot in the user's wallet, the wallet has to be already installed;\n" +
@@ -102,7 +102,7 @@ exports.paymentIsConfirmed = () => {
 exports.attestedFirstTimeBonus = (rewardInUSD, rewardInBytes, contractRewardInBytes, vesting_ts) => {
 	let contractRewardInUSD = rewardInUSD * conf.rewardContractShare;
 	let cashRewardInUSD = rewardInUSD - contractRewardInUSD;
-	let text = `You attested your steem username for the first time and will receive a welcome bonus of $${cashRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})} (${(rewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})} GB) from Byteball distribution fund.`;
+	let text = `You attested your steem username for the first time and will receive a welcome bonus of $${cashRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})} (${(rewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})} GB) from Obyte distribution fund.`;
 	if (contractRewardInBytes)
 		text += "  You will also receive a reward of $"+contractRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})+" ("+(contractRewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})+" GB) that will be locked on a smart contract for "+conf.contractTerm+" year and can be spent only after "+new Date(vesting_ts).toDateString()+".";
 	return text;
@@ -111,10 +111,10 @@ exports.attestedFirstTimeBonus = (rewardInUSD, rewardInBytes, contractRewardInBy
 exports.referredUserBonus = (referralRewardInUSD, referralRewardInBytes, contractReferralRewardInBytes, referrer_vesting_date_ts, username) => {
 	let contractReferralRewardInUSD = referralRewardInUSD * conf.referralRewardContractShare;
 	let cashReferralRewardInUSD = referralRewardInUSD - contractReferralRewardInUSD;
-	let text =  `You referred user ${username} who has just verified his steem username and you will receive a reward of $${cashReferralRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})} (${(referralRewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})} GB) from Byteball distribution fund.`;
+	let text =  `You referred user ${username} who has just verified his steem username and you will receive a reward of $${cashReferralRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})} (${(referralRewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})} GB) from Obyte distribution fund.`;
 	if (contractReferralRewardInBytes)
 		text += "  You will also receive a reward of $"+contractReferralRewardInUSD.toLocaleString([], {minimumFractionDigits: 2})+" ("+(contractReferralRewardInBytes/1e9).toLocaleString([], {maximumFractionDigits: 9})+" GB) that will be locked on a smart contract for "+conf.contractTerm+" year and can be spent only after "+new Date(referrer_vesting_date_ts).toDateString()+".";
-	text += `\n\nThank you for bringing in a new byteballer, the value of the ecosystem grows with each new user!`;
+	text += `\n\nThank you for bringing in a new obyter, the value of the ecosystem grows with each new user!`;
 	return text;
 };
 

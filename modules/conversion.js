@@ -16,7 +16,7 @@ function checkAllRatesUpdated() {
 		bRatesReady = true;
 		console.log('rates are ready');
 		console.log(`1$ = ${getPriceInBytes(1)} Bytes at ${new Date()}`);
-		const headlessWallet = require('headless-byteball'); // start loading headless only when rates are ready
+		const headlessWallet = require('headless-obyte'); // start loading headless only when rates are ready
 		checkRatesAndHeadless();
 	}
 }

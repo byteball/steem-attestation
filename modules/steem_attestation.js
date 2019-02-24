@@ -63,7 +63,7 @@ function postAndWriteAttestation(transaction_id, attestor_address, attestation_p
 						[unit, transaction_id],
 						() => {
 							let device = require('ocore/device.js');
-							let text = "Now your steem username is attested, see the attestation unit: https://explorer.byteball.org/#"+unit;
+							let text = "Now your steem username is attested, see the attestation unit: https://explorer.obyte.org/#"+unit;
 
 							if (src_profile) {
 								let private_profile = {
@@ -101,7 +101,7 @@ function postAttestation(attestor_address, payload, onDone) {
 
 	let network = require('ocore/network.js');
 	let composer = require('ocore/composer.js');
-	let headlessWallet = require('headless-byteball');
+	let headlessWallet = require('headless-obyte');
 	let objMessage = {
 		app: "attestation",
 		payload_location: "inline",

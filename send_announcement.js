@@ -3,7 +3,7 @@
 var async = require('async');
 var db = require('ocore/db.js');
 var eventBus = require('ocore/event_bus.js');
-var headlessWallet = require('headless-byteball');
+var headlessWallet = require('headless-obyte');
 
 /*
 const announcement = `Dear Steemians!

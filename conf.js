@@ -11,7 +11,7 @@ exports.storage = 'sqlite';
 exports.socksHost = '127.0.0.1';
 exports.socksPort = 9050;
 
-exports.hub = 'byteball.org/bb';
+exports.hub = 'obyte.org/bb';
 exports.deviceName = 'Steem attestation bot';
 exports.permanent_pairing_secret = '*';
 exports.control_addresses = [''];
