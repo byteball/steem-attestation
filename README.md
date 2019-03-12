@@ -5,7 +5,7 @@ A bot that attests Steem account and reputation
 * Run `npm install` to install node modules.
 * Run `node db_import.js` to import `db.sql` into the database and appling database migrations.
 * Run `node attestation.js` first time to generate keys.
-* Configure `admin_email`, `from_email`, `site`, `steemconnectApp` and `salt` values in new conf.json file (desktopApp.getAppDataDir() folder). Read more about other configuration options [there](https://github.com/byteball/headless-byteball#customize).
+* Configure `admin_email`, `from_email`, `site`, `steemconnectApp` and `salt` values in new conf.json file (desktopApp.getAppDataDir() folder). Read more about other configuration options [there](https://github.com/byteball/headless-obyte#customize).
 * Send bytes to `== distribution address`, which is displayed in logs, it is for rewards and referral bonuses.
 * Run `node attestation.js` again.
 
