@@ -53,7 +53,7 @@ exports.referralRewardContractShare = 0.75;
 exports.contractTerm = 1; // years
 exports.contractUnclaimedTerm = 2; // years
 
-exports.TIMESTAMPER_ADDRESS = 'I2ADHGP4HL6J37NQAD73J7E5SKFIXJOT'; // isTestnet ? 'OPNUXBRSSQQGHKQNEPD2GLWQYEUY5XLD' : 'I2ADHGP4HL6J37NQAD73J7E5SKFIXJOT'
+exports.TIMESTAMPER_ADDRESS = process.env.testnet ? 'OPNUXBRSSQQGHKQNEPD2GLWQYEUY5XLD' : 'I2ADHGP4HL6J37NQAD73J7E5SKFIXJOT';
 
 exports.site = 'https://steem-byteball.org';
 
