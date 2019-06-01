@@ -6,7 +6,7 @@ CREATE TABLE users (
 	creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (device_address) REFERENCES correspondent_devices(device_address)
 );
-
+-- query separator
 CREATE TABLE receiving_addresses (
 	receiving_address CHAR(32) NOT NULL PRIMARY KEY,
 	device_address CHAR(33) NOT NULL,
@@ -22,10 +22,13 @@ CREATE TABLE receiving_addresses (
 	FOREIGN KEY (device_address) REFERENCES correspondent_devices(device_address),
 	FOREIGN KEY (receiving_address) REFERENCES my_addresses(address)
 );
+-- query separator
 CREATE INDEX byReceivingAddress ON receiving_addresses(receiving_address);
+-- query separator
 CREATE INDEX ra_byUserAddress ON receiving_addresses(user_address);
+-- query separator
 CREATE INDEX byUsername ON receiving_addresses(username);
-
+-- query separator
 CREATE TABLE transactions (
 	transaction_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	receiving_address CHAR(32) NOT NULL,
@@ -33,7 +36,7 @@ CREATE TABLE transactions (
 	creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (receiving_address) REFERENCES receiving_addresses(receiving_address)
 );
-
+-- query separator
 CREATE TABLE accepted_payments (
 	transaction_id INTEGER NOT NULL PRIMARY KEY,
 	receiving_address CHAR(32) NOT NULL,
@@ -45,9 +48,9 @@ CREATE TABLE accepted_payments (
 	confirmation_date TIMESTAMP NULL,
 	FOREIGN KEY (receiving_address) REFERENCES receiving_addresses(receiving_address),
 	FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id)
---	FOREIGN KEY (payment_unit) REFERENCES units(unit) ON DELETE CASCADE
+	-- FOREIGN KEY (payment_unit) REFERENCES units(unit) ON DELETE CASCADE
 );
-
+-- query separator
 CREATE TABLE rejected_payments (
 	rejected_payment_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	receiving_address CHAR(32) NOT NULL,
@@ -57,9 +60,9 @@ CREATE TABLE rejected_payments (
 	payment_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	error TEXT NOT NULL,
 	FOREIGN KEY (receiving_address) REFERENCES receiving_addresses(receiving_address)
---	FOREIGN KEY (payment_unit) REFERENCES units(unit) ON DELETE CASCADE
+	-- FOREIGN KEY (payment_unit) REFERENCES units(unit) ON DELETE CASCADE
 );
-
+-- query separator
 CREATE TABLE signed_messages (
 	transaction_id INTEGER NOT NULL PRIMARY KEY,
 	user_address CHAR(32) NOT NULL,
@@ -67,9 +70,9 @@ CREATE TABLE signed_messages (
 	creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id)
 );
+-- query separator
 CREATE INDEX sm_byUserAddress ON signed_messages(user_address);
-
-
+-- query separator
 CREATE TABLE attestation_units (
 	transaction_id INTEGER NOT NULL,
 	attestation_unit CHAR(44) NULL UNIQUE,
@@ -78,7 +81,7 @@ CREATE TABLE attestation_units (
 	FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id),
 	FOREIGN KEY (attestation_unit) REFERENCES units(unit)
 );
-
+-- query separator
 CREATE TABLE contracts (
 	user_address CHAR(32) NOT NULL PRIMARY KEY,
 	contract_address CHAR(32) NOT NULL UNIQUE,
@@ -86,7 +89,7 @@ CREATE TABLE contracts (
 	contract_vesting_date TIMESTAMP NOT NULL,
 	FOREIGN KEY (contract_address) REFERENCES shared_addresses(shared_address)
 );
-
+-- query separator
 CREATE TABLE link_referrals (
 	referring_user_address CHAR(32) NOT NULL, -- must be attested
 	device_address CHAR(33) NOT NULL,
@@ -95,7 +98,7 @@ CREATE TABLE link_referrals (
 	PRIMARY KEY (device_address, referring_user_address, type),
 	FOREIGN KEY (device_address) REFERENCES correspondent_devices(device_address)
 );
-
+-- query separator
 CREATE TABLE reward_units (
 	transaction_id INTEGER NOT NULL PRIMARY KEY,
 	device_address CHAR(33) NOT NULL UNIQUE,
@@ -109,7 +112,7 @@ CREATE TABLE reward_units (
 	FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id),
 	FOREIGN KEY (reward_unit) REFERENCES units(unit)
 );
-
+-- query separator
 CREATE TABLE referral_reward_units (
 	transaction_id INTEGER NOT NULL PRIMARY KEY,
 	user_address CHAR(32) NOT NULL,
