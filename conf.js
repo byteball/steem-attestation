@@ -8,8 +8,8 @@ exports.bLight = false;
 exports.storage = 'sqlite';
 
 // TOR is recommended. If you don't run TOR, please comment the next two lines
-exports.socksHost = '127.0.0.1';
-exports.socksPort = 9050;
+// exports.socksHost = '127.0.0.1';
+// exports.socksPort = 9050;
 
 exports.hub = process.env.testnet ? 'obyte.org/bb-test' : 'obyte.org/bb';
 exports.deviceName = 'Steem attestation bot';
