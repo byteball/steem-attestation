@@ -22,7 +22,9 @@ https://www.binance.com/vote.html
 */
 //const announcement = "Byteball contest with 22 GB in prizes ends 30 September. You can still enter. Only 7 people with entries so far. Hurry! See https://goo.gl/33M5za";
 
-const announcement = "We are extremely pleased to announce our first decentralized witness candidate. This is a major milestone for Byteball. Read the full article here: https://medium.com/byteball/first-decentralized-witness-candidate-rogier-eijkelhof-9e5619166334";
+//const announcement = "We are extremely pleased to announce our first decentralized witness candidate. This is a major milestone for Byteball. Read the full article here: https://medium.com/byteball/first-decentralized-witness-candidate-rogier-eijkelhof-9e5619166334";
+
+const announcement = "Obyte needs your help to get decentralized. The second independent witness candidate Fabien Marino was put forward 2 months ago https://medium.com/obyte/second-independent-witness-candidate-fabien-marino-d4e8dccadee but we have not had enough community feedback so far. The Obyte Foundation will not decide everything for you, please take part in Obyte governance and either support Fabien by editing the witness list in your wallet as indicated in the article or air your concerns on Obyte Discord, Reddit, or Telegram. Don’t stay indifferent, the faster we decentralize, the more likely we will be able to attract well known real world brands to the project! Suggestions of other witness candidates are also welcome.";
 
 //const optout_text = "\n\nIf you don't want to receive news here, [click here to opt out](command:optout).";
 const message = announcement;// + optout_text;
