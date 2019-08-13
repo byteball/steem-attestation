@@ -63,7 +63,8 @@ function postAndWriteAttestation(transaction_id, attestor_address, attestation_p
 						[unit, transaction_id],
 						() => {
 							let device = require('ocore/device.js');
-							let text = "Now your steem username is attested, see the attestation unit: https://explorer.obyte.org/#"+unit;
+							let explorer = (process.env.testnet ? 'https://testnetexplorer.obyte.org/#' : 'https://explorer.obyte.org/#');
+							let text = "Now your steem username is attested, see the attestation unit: "+ explorer + unit;
 
 							if (src_profile) {
 								let private_profile = {
