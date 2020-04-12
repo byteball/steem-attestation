@@ -3,8 +3,11 @@
 const conf = require('ocore/conf');
 const objectHash = require('ocore/object_hash.js');
 const db = require('ocore/db');
+const constants = require('ocore/constants');
 const notifications = require('./notifications');
 const texts = require('./texts');
+
+var bJsonBased = (constants.version !== constants.versionWithoutTimestamp);
 
 function retryPostingAttestations() {
 	if (!exports.steemAttestorAddress)
@@ -69,7 +72,7 @@ function postAndWriteAttestation(transaction_id, attestor_address, attestation_p
 							if (src_profile) {
 								let private_profile = {
 									unit: unit,
-									payload_hash: objectHash.getBase64Hash(attestation_payload),
+									payload_hash: objectHash.getBase64Hash(attestation_payload, bJsonBased),
 									src_profile: src_profile
 								};
 								let base64PrivateProfile = Buffer.from(JSON.stringify(private_profile)).toString('base64');
@@ -106,7 +109,7 @@ function postAttestation(attestor_address, payload, onDone) {
 	let objMessage = {
 		app: "attestation",
 		payload_location: "inline",
-		payload_hash: objectHash.getBase64Hash(payload),
+		payload_hash: objectHash.getBase64Hash(payload, bJsonBased),
 		payload: payload
 	};
 
@@ -150,7 +153,7 @@ function getUserId(profile){
 function getAttestationPayloadAndSrcProfile(user_address, steem_username, reputation, bPublic) {
 	let profile = {
 		steem_username: steem_username,
-		reputation: reputation
+		reputation: String(reputation)
 	};
 	if (bPublic) {
 		profile.user_id = getUserId(profile);
@@ -180,11 +183,11 @@ function hideProfile(profile) {
 		let value = profile[field];
 		let blinding = composer.generateBlinding();
 		// console.error(`hideProfile: ${field}, ${value}, ${blinding}`);
-		let hidden_value = objectHash.getBase64Hash([value, blinding]);
+		let hidden_value = objectHash.getBase64Hash([value, blinding], bJsonBased);
 		hidden_profile[field] = hidden_value;
 		src_profile[field] = [value, blinding];
 	}
-	let profile_hash = objectHash.getBase64Hash(hidden_profile);
+	let profile_hash = objectHash.getBase64Hash(hidden_profile, bJsonBased);
 	let user_id = getUserId(profile);
 	let public_profile = {
 		profile_hash: profile_hash,
