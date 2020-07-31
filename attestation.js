@@ -4,6 +4,7 @@ const constants = require('ocore/constants.js');
 const conf = require('ocore/conf');
 const db = require('ocore/db');
 const eventBus = require('ocore/event_bus');
+const walletDefinedByAddresses = require('ocore/wallet_defined_by_addresses');
 const validationUtils = require('ocore/validation_utils');
 const mail = require('ocore/mail');
 const texts = require('./modules/texts');
@@ -499,6 +500,22 @@ function respond(from_address, text, response = '') {
 				return onDone();
 			let link = api.getLoginURL(userInfo.unique_id);
 			onDone(texts.proveUsername(link));
+		}
+
+		if (text === 'resend') {
+			walletDefinedByAddresses.sendToPeerAllSharedAddressesHavingUnspentOutputs(from_address, "base", {
+				ifFundedSharedAddress: function(numberOfContracts) {
+					device.sendMessageToDevice(from_address, "text",
+						`Found and resent ${numberOfContracts} smart contracts that have Bytes on them to your wallet. Please be aware that contracts can only be restored to the same wallet they were originally sent to.`
+					);
+				},
+				ifNoFundedSharedAddress: function() {
+					device.sendMessageToDevice(from_address, "text",
+						`No smart contracts with Bytes on it were found. Please be aware, that smart contracts can only be resent to the wallet they were sent to originally. If you have an old backup or even the seed words, you can try to restore that and request resending the smart contracts again.`
+					);
+				}
+			});
+			return;
 		}
 
 		checkUserAddress((userAddressResponse) => {
