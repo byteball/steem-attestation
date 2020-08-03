@@ -4,7 +4,6 @@ const constants = require('ocore/constants.js');
 const conf = require('ocore/conf');
 const db = require('ocore/db');
 const eventBus = require('ocore/event_bus');
-const walletDefinedByAddresses = require('ocore/wallet_defined_by_addresses');
 const validationUtils = require('ocore/validation_utils');
 const mail = require('ocore/mail');
 const texts = require('./modules/texts');
@@ -380,7 +379,10 @@ function attest(row, proof_type){
 					transaction_id,
 					steemAttestation.steemAttestorAddress,
 					attestation,
-					src_profile
+					src_profile,
+					function(err, attestation_unit) {
+						if (err) console.error(err);
+					}
 				);
 
 				let rewardInUSD = getRewardInUSDByReputation(row.reputation);
@@ -503,6 +505,7 @@ function respond(from_address, text, response = '') {
 		}
 
 		if (text === 'resend') {
+			const walletDefinedByAddresses = require('ocore/wallet_defined_by_addresses');
 			walletDefinedByAddresses.sendToPeerAllSharedAddressesHavingUnspentOutputs(from_address, "base", {
 				ifFundedSharedAddress: function(numberOfContracts) {
 					device.sendMessageToDevice(from_address, "text",
@@ -554,8 +557,8 @@ function respond(from_address, text, response = '') {
 					if (arrSignedMessageMatches){
 						let signedMessageBase64 = arrSignedMessageMatches[1];
 						var validation = require('ocore/validation.js');
-						var signedMessageJson = Buffer(signedMessageBase64, 'base64').toString('utf8');
-						console.error(signedMessageJson);
+						var signedMessageJson = Buffer.from(signedMessageBase64, 'base64').toString('utf8');
+						//console.error(signedMessageJson);
 						try{
 							var objSignedMessage = JSON.parse(signedMessageJson);
 						}

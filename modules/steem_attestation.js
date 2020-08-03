@@ -22,16 +22,24 @@ function retryPostingAttestations() {
 			rows.forEach((row) => {
 				if (row.reputation === null)
 					throw Error("no rep in tx "+row.transaction_id);
+				// console.error('retryPostingAttestations: ' + row.transaction_id + ' ' + row.post_publicly);
 				let	[attestation, src_profile] = getAttestationPayloadAndSrcProfile(
 					row.user_address,
 					row.username,
 					row.reputation,
 					row.post_publicly
 				);
-				// console.error('retryPostingAttestations: ' + row.transaction_id + ' ' + row.post_publicly);
 				// console.error(attestation);
 				// console.error(src_profile);
-				postAndWriteAttestation(row.transaction_id, exports.steemAttestorAddress, attestation, src_profile);
+				postAndWriteAttestation(
+					row.transaction_id,
+					exports.steemAttestorAddress,
+					attestation,
+					src_profile,
+					function(err, attestation_unit) {
+						if (err) console.error(err);
+					}
+				);
 			});
 		}
 	);
@@ -51,7 +59,7 @@ function postAndWriteAttestation(transaction_id, attestor_address, attestation_p
 			(rows) => {
 				let row = rows[0];
 				if (row.attestation_date) { // already posted
-					callback(null, null);
+					callback('already posted');
 					return unlock();
 				}
 
@@ -152,7 +160,7 @@ function getUserId(profile){
 
 function getAttestationPayloadAndSrcProfile(user_address, steem_username, reputation, bPublic) {
 	let profile = {
-		steem_username: steem_username,
+		steem_username: String(steem_username),
 		reputation: String(reputation)
 	};
 	if (bPublic) {

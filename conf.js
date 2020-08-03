@@ -40,6 +40,7 @@ exports.THRESHOLD_DISTANCE = 20;
 exports.MIN_AVAILABLE_WITNESSINGS = 100;
 
 exports.priceInBytes = 49000;
+exports.bAllowProofByPayment = false;
 exports.bAcceptUnconfirmedPayments = true;
 
 exports.MAX_REFERRAL_DEPTH = 5;
@@ -60,8 +61,6 @@ exports.referralRewardContractShare = 0.75;
 
 exports.contractTerm = 1; // years
 exports.contractUnclaimedTerm = 2; // years
-
-exports.TIMESTAMPER_ADDRESS = process.env.testnet ? 'OPNUXBRSSQQGHKQNEPD2GLWQYEUY5XLD' : 'I2ADHGP4HL6J37NQAD73J7E5SKFIXJOT';
 
 exports.site = 'https://steem-byteball.org';
 
