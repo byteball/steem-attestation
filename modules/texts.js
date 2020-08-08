@@ -25,7 +25,7 @@ exports.greeting = () => {
 exports.weHaveReferralProgram = (user_address) => {
 	const device = require('ocore/device.js');
 	const invite_code = device.getMyDevicePubKey()+"@"+conf.hub+"#"+user_address;
-	const qr_url = conf.site+"/qr/?code="+ encodeURIComponent("byteball:"+ invite_code);
+	const qr_url = conf.site+"/qr/?code="+ encodeURIComponent("obyte:"+ invite_code);
 	return [
 		"Remember, we have a referral program: you get rewards by recommending new users to link their Steem and Obyte accounts.  There are "+(conf.bAllowProofByPayment ? 4 : 3)+" ways to do it and ensure that the referrals are tracked to you:\n" +
 		(conf.bAllowProofByPayment ? "➡ you send Bytes from your attested address to a new user who is not attested yet, and he/she uses those Bytes to pay for a successful attestation;\n" : "") +
@@ -71,9 +71,9 @@ exports.publicChosen = (username) => {
 	].join('');
 };
 
-exports.pleasePay = (receivingAddress, price, challenge) => {
+exports.pleasePay = (receivingAddress, price, user_address, challenge) => {
 	if (conf.bAllowProofByPayment){
-		let text = `Please pay for the attestation: [attestation payment](byteball:${receivingAddress}?amount=${price}).\n\nAlternatively, you can prove ownership of your address by signing a message: [message](sign-message-request:${challenge})`;
+		let text = `Please pay for the attestation: [attestation payment](obyte:${receivingAddress}?amount=${price}&single_address=single${user_address}).\n\nAlternatively, you can prove ownership of your address by signing a message: [message](sign-message-request:${challenge})`;
 		text +=  (conf.signingRewardShare === 1) ? '.' : `, in this case your attestation reward (if any) will be ${conf.signingRewardShare*100}% of the normal reward.`;
 		return text;
 	}
@@ -81,8 +81,8 @@ exports.pleasePay = (receivingAddress, price, challenge) => {
 		return `Please prove ownership of your address by signing a message: [message](sign-message-request:${challenge}).`;
 };
 
-exports.pleasePayOrPrivacy = (receivingAddress, price, challenge, postPublicly) => {
-	return (postPublicly === null) ? exports.privateOrPublic() : exports.pleasePay(receivingAddress, price, challenge);
+exports.pleasePayOrPrivacy = (receivingAddress, price, user_address, challenge, postPublicly) => {
+	return (postPublicly === null) ? exports.privateOrPublic() : exports.pleasePay(receivingAddress, price, user_address, challenge);
 };
 
 

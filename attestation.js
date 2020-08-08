@@ -69,7 +69,7 @@ function startWebServer(){
 						if (post_publicly === null)
 							response += texts.privateOrPublic();
 						else
-							response += texts.pleasePay(receiving_address, conf.priceInBytes, challenge) + '\n\n' +
+							response += texts.pleasePay(receiving_address, conf.priceInBytes, userInfo.user_address, challenge) + '\n\n' +
 								((post_publicly === 0) ? texts.privateChosen() : texts.publicChosen(userInfo.username));
 						device.sendMessageToDevice(userInfo.device_address, 'text', response);
 					});
@@ -311,7 +311,7 @@ function checkPayment(row, onDone) {
 	if (row.amount < conf.priceInBytes) {
 		let text = `Received ${row.amount} Bytes from you, which is less than the expected ${conf.priceInBytes} Bytes.`;
 		let challenge = row.username + ' ' + row.user_address;
-		return onDone(text + '\n\n' + texts.pleasePay(row.receiving_address, conf.priceInBytes, challenge));
+		return onDone(text + '\n\n' + texts.pleasePay(row.receiving_address, conf.priceInBytes, row.user_address, challenge));
 	}
 
 	function resetUserAddress(){
@@ -627,7 +627,7 @@ function respond(from_address, text, response = '') {
 									from_address,
 									'text',
 									(response ? response + '\n\n' : '') + 
-										texts.pleasePayOrPrivacy(receiving_address, price, challenge, post_publicly)
+										texts.pleasePayOrPrivacy(receiving_address, price, userInfo.user_address, challenge, post_publicly)
 								);
 							}
 
