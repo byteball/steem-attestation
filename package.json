@@ -15,5 +15,9 @@
 		"headless-obyte": "git+https://github.com/byteball/headless-obyte.git",
 		"request": "2.83.0",
 		"sc2-sdk": "^1.0.2"
+	},
+	"resolutions": {
+		"level-rocksdb": "^5.0.0",
+		"sqlite3": "^5.0.0"
 	}
 }
