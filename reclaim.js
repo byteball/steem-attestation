@@ -14,7 +14,7 @@ async function reclaim() {
 		`SELECT contract_address, SUM(amount) AS total 
 		FROM contracts
 		CROSS JOIN outputs ON contract_address=address AND is_spent=0 AND asset IS NULL
-		WHERE contract_date < '2020-03-20'
+		WHERE contract_date < '2020-03-24'
 		GROUP BY contract_address
 		HAVING total > 0`
 	);
