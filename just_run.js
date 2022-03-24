@@ -7,6 +7,7 @@ const network = require('ocore/network');
 
 
 async function consolidate() {
+	headlessWallet.setupChatEventHandlers();
 	const address = await headlessWallet.issueOrSelectAddressByIndex(0, 1);
 	await network.waitUntilCatchedUp();
 	console.log('catched up, will consolidate');
