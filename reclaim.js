@@ -7,13 +7,14 @@ const headlessWallet = require('headless-obyte');
 
 
 async function reclaim() {
+	const device = require('ocore/device.js');
+	const address = await headlessWallet.issueOrSelectAddressByIndex(0, 1);
+	console.error(`=== dist address`, address);
+	
 	headlessWallet.setupChatEventHandlers();
 	const consolidation = require('headless-obyte/consolidation.js');
 	consolidation.scheduleConsolidation(address, headlessWallet.signer, 1, 10 * 60 * 1000);
 	
-	const device = require('ocore/device.js');
-	const address = await headlessWallet.issueOrSelectAddressByIndex(0, 1);
-	console.error(`=== dist address`, address);
 	const rows = await db.query(
 		`SELECT contract_address, SUM(amount) AS total 
 		FROM contracts
