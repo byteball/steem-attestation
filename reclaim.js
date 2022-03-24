@@ -6,15 +6,21 @@ const eventBus = require('ocore/event_bus.js');
 const headlessWallet = require('headless-obyte');
 
 
-async function reclaim() {
-	const device = require('ocore/device.js');
+async function start() {
 	const address = await headlessWallet.issueOrSelectAddressByIndex(0, 1);
 	console.error(`=== dist address`, address);
-	
+
 	headlessWallet.setupChatEventHandlers();
 	const consolidation = require('headless-obyte/consolidation.js');
 	consolidation.scheduleConsolidation(address, headlessWallet.signer, 1, 10 * 60 * 1000);
-	
+
+	reclaim();
+}
+
+async function reclaim() {
+	console.error(`=== reclaim`);
+	const address = await headlessWallet.issueOrSelectAddressByIndex(0, 1);
+	const device = require('ocore/device.js');
 	const rows = await db.query(
 		`SELECT contract_address, SUM(amount) AS total 
 		FROM contracts
@@ -24,6 +30,8 @@ async function reclaim() {
 		HAVING total > 0`
 	);
 	console.error(`=== ${rows.length} contracts`);
+	if (rows.length === 0)
+		return console.error('done');
 	const contract_addresses = rows.map(r => r.contract_address);
 	let opts = {
 		asset: null,
@@ -43,8 +51,9 @@ async function reclaim() {
 		const { unit } = await headlessWallet.sendMultiPayment(opts);
 		console.error(`sent`, unit);
 	}
+	reclaim();
 }
 
 
-eventBus.once('headless_wallet_ready', reclaim);
+eventBus.once('headless_wallet_ready', start);
 process.on('unhandledRejection', up => { throw up; });
