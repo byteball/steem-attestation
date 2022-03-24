@@ -7,6 +7,10 @@ const headlessWallet = require('headless-obyte');
 
 
 async function reclaim() {
+	headlessWallet.setupChatEventHandlers();
+	const consolidation = require('headless-obyte/consolidation.js');
+	consolidation.scheduleConsolidation(address, headlessWallet.signer, 1, 10 * 60 * 1000);
+	
 	const device = require('ocore/device.js');
 	const address = await headlessWallet.issueOrSelectAddressByIndex(0, 1);
 	console.error(`=== dist address`, address);
