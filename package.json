@@ -11,7 +11,7 @@
 		"obyte-witness": "git+https://github.com/byteball/obyte-witness.git",
 		"ocore": "git+https://github.com/byteball/ocore.git",
 		"cookie-parser": "1.4.3",
-		"express": "4.16.2",
+		"express": "4.19.2",
 		"headless-obyte": "git+https://github.com/byteball/headless-obyte.git",
 		"request": "2.83.0",
 		"sc2-sdk": "^1.0.2"
